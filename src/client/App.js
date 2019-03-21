@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './app.css';
-import ReactImage from './react.png';
-import RepoItem from './RepoItem'
+import RepoItem from './RepoItem';
+import CommitsScreen from './CommitsScreen';
 
 export default class App extends Component {
 
@@ -11,10 +11,6 @@ export default class App extends Component {
       username: null, user: null, repos: null, selectedRepo: null
     };
     this.selectRepo = this.selectRepo.bind(this);
-  }
-  
-  selectRepo(selectedRepo) {
-    this.setState({ selectedRepo })
   }
 
   componentDidMount() {
@@ -32,22 +28,32 @@ export default class App extends Component {
       .then(user => this.setState({ username: user.username }));
   }
 
+  selectRepo(selectedRepo) {
+    this.setState({ selectedRepo });
+  }
+
   render() {
-    console.log('state', this.state);
     const { username, user, repos, selectedRepo } = this.state;
+    let screen;
+    const loaded = repos && user;
     let listItems;
-    if (repos) {
+    if (loaded) {
       listItems = repos.map(repo => <RepoItem onItemClick={this.selectRepo} repo={repo} />);
+      if (selectedRepo) {
+        screen = <div> <CommitsScreen repo = {selectedRepo} /> </div>;
+      } else {
+        screen = listItems;
+      }
     }
+    console.log('state', this.state);
     return (
       <div>
-        {}
-        {selectedRepo && <div>{selectedRepo.name}</div>}
-        {username ? <h1>{`Hellos ${username}`}</h1> : <h1>Loading.. please wait!</h1>}
         {user ? <h1>{`Logged In as ${user}`}</h1> : <a id="login-button" href="/api/login">Log In With GitHub</a>}
-        <body />
-        {listItems}
-        <img src={ReactImage} alt="react" />
+        {screen}
+        {/* {selectedRepo && <div>{selectedRepo.name}</div>} */}
+        {/* {username ? <h1>{`Hellos ${username}`}</h1> : <h1>Loading.. please wait!</h1>} */}
+        {/* <body /> */}
+        {/* <img src={ReactImage} alt="react" /> */}
       </div>
     );
   }
