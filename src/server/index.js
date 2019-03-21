@@ -144,11 +144,8 @@ app.get('/api/get_repo_commits', (req, res) => {
       }
     },
     (error, response, body) => {
-      console.log('@@@@@', body);
-      
       const jsonData = JSON.parse(body);
-      JSON.parse(body);
-      req.session.repos = jsonData;
+      res.send({commits: jsonData});
     }
   );
 });

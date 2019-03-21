@@ -19,6 +19,7 @@ export default class App extends Component {
       .then(res => res.json())
       .then(a => this.setState({ user: a.user }));
 
+    // move this to repos screen
     fetch('/api/get_repos')
       .then(res => res.json())
       .then(a => this.setState({ repos: a.repos }));
@@ -37,6 +38,17 @@ export default class App extends Component {
     let screen;
     const loaded = repos && user;
     let listItems;
+    // TODO:
+    // if (!authenticated) {
+    //   screen = loginScreen;
+    // } else if (authenticated && !reposlected) {
+    //   screen = reposScreen
+    // } else if (authenticated &&reposelected) {
+    //   screen = commitsScreen
+    // } else {
+    //   screen = Loading
+    // }
+    // }
     if (loaded) {
       listItems = repos.map(repo => <RepoItem onItemClick={this.selectRepo} repo={repo} />);
       if (selectedRepo) {
