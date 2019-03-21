@@ -104,7 +104,6 @@ app.get('/fetch_user', (req, res) => {
     },
     (error, response, body) => {
       const jsonData = JSON.parse(body);
-      console.log('jsonData', jsonData.login);
       req.session.user = jsonData.login;
       res.redirect('/fetch_repos');
     }
@@ -114,7 +113,7 @@ app.get('/fetch_user', (req, res) => {
 app.get('/fetch_repos', (req, res) => {
   request.get(
     {
-      url: `https://api.github.com/user/repos?per_page=100`,
+      url: 'https://api.github.com/user/repos?per_page=100',
       headers: {
         Authorization: `token ${req.session.access_token}`,
         'User-Agent': 'Login-App'
@@ -122,19 +121,34 @@ app.get('/fetch_repos', (req, res) => {
     },
     (error, response, body) => {
       const jsonData = JSON.parse(body);
-      // console.log(jsonData);
       JSON.parse(body);
       req.session.repos = jsonData;
-      // data =[];
-      // jsonData.forEach((repo) => {
-      //   data.append(repo);
-      // });
       if (isDev) {
         // HACK (liu-tim): problem with two servers running force to redirect to web-pack-dev port
         res.redirect('http://localhost:3000');
       } else {
         res.redirect('/');
       }
+    }
+  );
+});
+
+app.get('/api/get_repo_commits', (req, res) => {
+  const { repo } = req.query;
+  request.get(
+    {
+      url: `https://api.github.com/repos/${req.session.user}/${repo}/commits`,
+      headers: {
+        Authorization: `token ${req.session.access_token}`,
+        'User-Agent': 'Login-App'
+      }
+    },
+    (error, response, body) => {
+      console.log('@@@@@', body);
+      
+      const jsonData = JSON.parse(body);
+      JSON.parse(body);
+      req.session.repos = jsonData;
     }
   );
 });
