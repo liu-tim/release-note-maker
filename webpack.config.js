@@ -35,14 +35,14 @@ module.exports = {
     port: 3000,
     open: true,
     proxy: {
-      '/api': 'http://localhost:8080'
+      '/api': 'http://localhost:8080',
+      secure: false
     }
   },
   plugins: [
     new CleanWebpackPlugin([outputDirectory]),
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      favicon: './public/favicon.ico'
     })
   ]
 };

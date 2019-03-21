@@ -7,16 +7,22 @@
     "build": "webpack --mode production",
     "start": "npm run build && node src/server/index.js",
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
-    "server": "nodemon src/server/index.js",
+    "server": "NODE_ENV=development nodemon src/server/index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Sandeep Raveesh",
   "license": "ISC",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
+    "dotenv": "^7.0.0",
     "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "querystring": "^0.2.0",
+    "randomstring": "^1.1.5",
     "react": "^16.5.2",
-    "react-dom": "^16.5.2"
+    "react-dom": "^16.5.2",
+    "request": "^2.88.0",
+    "url": "^0.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
