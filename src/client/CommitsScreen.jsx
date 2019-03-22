@@ -7,7 +7,7 @@ export default class CommitsScreen extends Component {
     super(props);
     this.state = {
       commits: null,
-      selectedCommit: null, 
+      selectedCommit: null,
     };
     this.selectCommit = this.selectCommit.bind(this);
   }
@@ -21,7 +21,20 @@ export default class CommitsScreen extends Component {
   }
 
   selectCommit(selectedCommit) {
-    console.log('selectedCOmmit', selectedCommit)
+    const { repo } = this.props;
+    const { name } = repo;
+    console.log('selectedCOmmit', selectedCommit);
+    fetch(`/api/create_release?repo=${name}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      // to do check if stringify is necesary
+      body: JSON.stringify({
+        tag_name: "v1.0.0",
+      })
+    });
     this.setState({ selectedCommit });
   }
 
