@@ -6,6 +6,7 @@ const qs = require('querystring');
 const path = require('path');
 const url = require('url');
 const randomString = require('randomstring');
+const bodyParser = require('body-parser');
 
 require('dotenv').config();
 
@@ -24,7 +25,8 @@ app.get('/api/getUsername', (req, res) => res.send({ username: os.userInfo().use
 // const redirect_uri = process.env.HOST + '/redirect';
 
 app.use(express.static('dist'));
-
+// support parsing of application/json type post data
+app.use(bodyParser.json());
 app.use(
   session({
     secret: randomString.generate(),
@@ -42,12 +44,10 @@ app.get('/', (req, res, next) => {
 });
 
 app.get('/api/get_user', (req, res) => {
-  console.log('GET USER', req.session.user);
   res.send({ user: req.session.user });
 });
 
 app.get('/api/get_repos', (req, res) => {
-  console.log('GET REPOS', req.session.repos);
   res.send({ repos: req.session.repos });
 });
 
@@ -65,7 +65,7 @@ app.get('/api/login', (req, res, next) => {
   res.redirect(githubAuthUrl);
 });
 
-app.all('/redirect', (req, res) => {
+app.get('/redirect', (req, res) => {
   const { code } = req.query;
   const returnedState = req.query.state;
   if (req.session.csrf_string === returnedState) {
@@ -150,5 +150,31 @@ app.get('/api/get_repo_commits', (req, res) => {
   );
 });
 
+// forwards post to gihub api
+app.post('/api/create_release', (req, res) => {
+  console.log('REQ body', req.body);
+  // req.checkBody('body', 'Body is required').notEmpty();
+  const { repo } = req.query;
+  const data = req.body;
+  request.post(
+    {
+      url: `https://api.github.com/repos/${req.session.user}/${repo}/releases`,
+      headers: {
+        Authorization: `token ${req.session.access_token}`,
+        'User-Agent': 'Login-App'
+      },
+      body: JSON.stringify(data)
+      // body: JSON.stringify({ tag_name: 'V1' })
+    },
+    (error, response, body) => {
+
+      // console.log(error);
+      console.log("RESPONSE", response);
+      console.log(body);
+      const jsonData = JSON.parse(body);
+      // console.log("JSON DATA POST", jsonData[0].url);
+    }
+  );
+});
 
 app.listen(process.env.PORT || 8080, () => console.log(`Listening on port ${process.env.PORT || 8080}!`));
