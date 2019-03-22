@@ -7,6 +7,7 @@ const path = require('path');
 const url = require('url');
 const randomString = require('randomstring');
 const bodyParser = require('body-parser');
+const semver = require('semver');
 
 require('dotenv').config();
 
@@ -150,29 +151,48 @@ app.get('/api/get_repo_commits', (req, res) => {
   );
 });
 
-// forwards post to gihub api
+/*
+  Receives repo name from post request
+  Get request to Github for latest repo release
+  Increment version number using semver
+  Post request to Github for creating repo release
+*/
 app.post('/api/create_release', (req, res) => {
   console.log('REQ body', req.body);
   // req.checkBody('body', 'Body is required').notEmpty();
   const { repo } = req.query;
-  const data = req.body;
-  request.post(
+  const { reqBody } = req.body;
+  request.get(
     {
-      url: `https://api.github.com/repos/${req.session.user}/${repo}/releases`,
+      url: `https://api.github.com/repos/${req.session.user}/${repo}/releases/latest`,
       headers: {
         Authorization: `token ${req.session.access_token}`,
         'User-Agent': 'Login-App'
-      },
-      body: JSON.stringify(data)
-      // body: JSON.stringify({ tag_name: 'V1' })
+      }
     },
     (error, response, body) => {
-
-      // console.log(error);
-      console.log("RESPONSE", response);
-      console.log(body);
       const jsonData = JSON.parse(body);
-      // console.log("JSON DATA POST", jsonData[0].url);
+      const tagName = jsonData.tag_name;
+      console.log('body', body)
+      console.log('tagName', tagName);
+      // Assume all major releases
+      const newTagName = tagName ? semver.inc(tagName, 'major') : '1.0.0';
+      request.post(
+        {
+          url: `https://api.github.com/repos/${req.session.user}/${repo}/releases`,
+          headers: {
+            Authorization: `token ${req.session.access_token}`,
+            'User-Agent': 'Login-App'
+          },
+          body: JSON.stringify({ tag_name: newTagName, body: reqBody })
+        },
+        (error, response, body) => {
+          console.log("RESPONSE", response);
+          console.log("body", body);
+          const jsonData = JSON.parse(body);
+          res.send(body);
+        }
+      );
     }
   );
 });
