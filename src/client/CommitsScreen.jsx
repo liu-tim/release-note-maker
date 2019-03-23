@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import CommitItem from './CommitItem';
+import Button from '@material-ui/core/Button';
 
 export default class CommitsScreen extends Component {
 
@@ -7,9 +8,10 @@ export default class CommitsScreen extends Component {
     super(props);
     this.state = {
       commits: null,
-      selectedCommit: null,
+      selectedCommits: new Set()
     };
-    this.selectCommit = this.selectCommit.bind(this);
+    this.handleToggleCommit = this.handleToggleCommit.bind(this);
+    this.handleCreateRelease = this.handleCreateRelease.bind(this);
   }
 
   componentDidMount() {
@@ -20,10 +22,27 @@ export default class CommitsScreen extends Component {
       .then(commits => this.setState(commits));
   }
 
-  selectCommit(selectedCommit) {
+  handleToggleCommit(commit) {
+    console.log('hastogglecommit', commit);
+    if (this.state.selectedCommits.has(commit)) {
+      this.state.selectedCommits.delete(commit);
+    } else {
+      this.state.selectedCommits.add(commit);
+    }
+  }
+
+  handleCreateRelease() {
+    const { selectedCommits } = this.state;
     const { repo } = this.props;
     const { name } = repo;
-    console.log('selectedCOmmit', selectedCommit);
+    
+    let reqBody = '';
+    selectedCommits.forEach((commit) => {
+      console.log(commit);
+      console.log(commit.message);
+      reqBody += `${commit.message}\n`;
+    });
+
     fetch(`/api/create_release?repo=${name}`, {
       method: 'POST',
       headers: {
@@ -32,24 +51,28 @@ export default class CommitsScreen extends Component {
       },
       // to do check if stringify is necesary
       body: JSON.stringify({
-        reqBody: selectedCommit.message,
+        reqBody,
       })
     });
-    this.setState({ selectedCommit });
   }
 
   render() {
-    console.log('selectedCommit', this.state.selectedCommit);
     const { repo } = this.props;
     const { name } = repo;
     const { commits } = this.state;
     let commitItems;
 
     if (commits) {
-      commitItems = commits.map(commit => <CommitItem commit={commit.commit} onItemClick={this.selectCommit} />);
+      commitItems = commits.map(commit => <CommitItem commit={commit.commit} handleCommitToggle={this.handleToggleCommit} />);
     }
     return (
-      <div>{commitItems}{name}</div>
+      <div>
+        Repo: {name} 
+        {commitItems}
+        <div>
+          <Button onClick={this.handleCreateRelease}> Generate Release </Button>
+        </div>
+      </div>
     );
   }
 }

@@ -145,8 +145,13 @@ app.get('/api/get_repo_commits', (req, res) => {
       }
     },
     (error, response, body) => {
+      // Check if there are commits for the repo
       const jsonData = JSON.parse(body);
-      res.send({commits: jsonData});
+      if (Array.isArray(jsonData)) {
+        res.send({commits: jsonData});
+      } else {
+        res.send([]);
+      }
     }
   );
 });
@@ -187,10 +192,8 @@ app.post('/api/create_release', (req, res) => {
           body: JSON.stringify({ tag_name: newTagName, body: reqBody })
         },
         (error, response, body) => {
-          console.log("RESPONSE", response);
-          console.log("body", body);
           const jsonData = JSON.parse(body);
-          res.send(body);
+          res.send({createdRelease: jsonData});
         }
       );
     }

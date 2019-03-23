@@ -1,19 +1,29 @@
 import React, { Component } from 'react';
 
 export default class CommitItem extends Component {
-  handleClick = () => {
-    console.log(this.props)
-    const { commit } = this.props;
-    this.props.onItemClick(commit);
+  state = {
+    isSelected: false,
+  }
+
+  toggleCommit = () => {
+    const { commit, handleCommitToggle } = this.props;
+    this.setState(({ isSelected }) => (
+      {
+        isSelected: !isSelected,
+      }
+    ));
+    handleCommitToggle(commit);
   }
 
   render() {
     const { commit } = this.props;
+    const { isSelected } = this.state;
     const { message } = commit;
     return (
-      <li onClick={this.handleClick}>
+      <div>
+        <input type="checkbox" checked={isSelected} onChange={this.toggleCommit} value={message} />
         {message}
-      </li>
+      </div>
     );
   }
 }
