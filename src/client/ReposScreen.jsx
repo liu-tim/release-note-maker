@@ -15,7 +15,7 @@ export default class ReposScreen extends Component {
   componentDidMount() {
     fetch('/api/get_repos')
       .then(res => res.json())
-      .then(a => this.setState({ repos: a.repos }));
+      .then(repos => this.setState(repos));
   }
 
   selectRepo(selectedRepo) {
@@ -28,9 +28,14 @@ export default class ReposScreen extends Component {
     if (selectedRepo) {
       screen = <CommitsScreen repo = {selectedRepo}/>;
     } else if (!repos) {
-      screen = <div>LOADING</div> 
+      screen = <div>LOADING</div>;
     } else {
-      screen = repos.map(repo => <RepoItem onItemClick={this.selectRepo} repo={repo} />);
+      screen = (
+        <div>
+          <h1>List of your repos: </h1>
+          {repos ? repos.map(repo => <RepoItem onItemClick={this.selectRepo} repo={repo} />) : <div> You have no repos</div>}
+        </div>
+      )
     }
     return (
       <div>

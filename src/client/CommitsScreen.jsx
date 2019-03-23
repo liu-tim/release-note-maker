@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import CommitItem from './CommitItem';
 import Button from '@material-ui/core/Button';
+import CommitItem from './CommitItem';
+import SummaryScreen from './SummaryScreen';
 
 export default class CommitsScreen extends Component {
 
@@ -8,7 +9,8 @@ export default class CommitsScreen extends Component {
     super(props);
     this.state = {
       commits: null,
-      selectedCommits: new Set()
+      selectedCommits: new Set(),
+      createdRelease: null,
     };
     this.handleToggleCommit = this.handleToggleCommit.bind(this);
     this.handleCreateRelease = this.handleCreateRelease.bind(this);
@@ -35,11 +37,9 @@ export default class CommitsScreen extends Component {
     const { selectedCommits } = this.state;
     const { repo } = this.props;
     const { name } = repo;
-    
+
     let reqBody = '';
     selectedCommits.forEach((commit) => {
-      console.log(commit);
-      console.log(commit.message);
       reqBody += `${commit.message}\n`;
     });
 
@@ -53,26 +53,35 @@ export default class CommitsScreen extends Component {
       body: JSON.stringify({
         reqBody,
       })
-    });
+    })
+      .then(res => res.json())
+      .then(createdRelease => this.setState(createdRelease));
   }
 
   render() {
     const { repo } = this.props;
     const { name } = repo;
-    const { commits } = this.state;
-    let commitItems;
+    const { commits, createdRelease } = this.state;
+    let commitItems, screen;
 
-    if (commits) {
-      commitItems = commits.map(commit => <CommitItem commit={commit.commit} handleCommitToggle={this.handleToggleCommit} />);
+    screen = (
+      <div>
+        {commits ? commits.map(commit => <CommitItem commit={commit.commit} handleCommitToggle={this.handleToggleCommit} />) : <div>You have no commits</div>}
+        <div>
+          <Button variant="outlined" onClick={this.handleCreateRelease}> Generate Release </Button>
+        </div>
+      </div>
+    )
+       
+    console.log('createdRelease', createdRelease);
+    if (createdRelease) {
+      screen = <SummaryScreen summary={createdRelease}/>
     }
     return (
       <div>
         Repo: {name} 
-        {commitItems}
-        <div>
-          <Button onClick={this.handleCreateRelease}> Generate Release </Button>
-        </div>
-      </div>
+        {screen}
+     </div>
     );
   }
 }
