@@ -32,7 +32,7 @@ export default class CommitsScreen extends Component {
       },
       // to do check if stringify is necesary
       body: JSON.stringify({
-        tag_name: "v1.0.0",
+        reqBody: selectedCommit.message,
       })
     });
     this.setState({ selectedCommit });
