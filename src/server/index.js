@@ -84,7 +84,6 @@ app.get('/redirect', (req, res) => {
       },
       (error, response, body) => {
         req.session.access_token = qs.parse(body).access_token;
-        console.log(req.session.access_token);
         res.redirect('/fetch_user');
       }
     );
@@ -163,7 +162,6 @@ app.get('/api/get_repo_commits', (req, res) => {
   Post request to Github for creating repo release
 */
 app.post('/api/create_release', (req, res) => {
-  console.log('REQ body', req.body);
   // req.checkBody('body', 'Body is required').notEmpty();
   const { repo } = req.query;
   const { reqBody } = req.body;
@@ -178,8 +176,6 @@ app.post('/api/create_release', (req, res) => {
     (error, response, body) => {
       const jsonData = JSON.parse(body);
       const tagName = jsonData.tag_name;
-      console.log('body', body)
-      console.log('tagName', tagName);
       // Assume all major releases
       const newTagName = tagName ? semver.inc(tagName, 'major') : '1.0.0';
       request.post(
@@ -193,7 +189,7 @@ app.post('/api/create_release', (req, res) => {
         },
         (error, response, body) => {
           const jsonData = JSON.parse(body);
-          res.send({createdRelease: jsonData});
+          res.send({releaseSummary: jsonData});
         }
       );
     }

@@ -10,10 +10,12 @@ export default class CommitsScreen extends Component {
     this.state = {
       commits: null,
       selectedCommits: new Set(),
-      createdRelease: null,
+      releaseSummary: null,
     };
     this.handleToggleCommit = this.handleToggleCommit.bind(this);
     this.handleCreateRelease = this.handleCreateRelease.bind(this);
+    this.goBack = this.goBack.bind(this);
+    this.clearReleaseSummary = this.clearReleaseSummary.bind(this);
   }
 
   componentDidMount() {
@@ -55,17 +57,26 @@ export default class CommitsScreen extends Component {
       })
     })
       .then(res => res.json())
-      .then(createdRelease => this.setState(createdRelease));
+      .then(releaseSummary => this.setState(releaseSummary));
+  }
+
+  goBack() {
+    this.props.clearRepoSelection();
+  }
+
+  clearReleaseSummary() {
+    this.setState({releaseSummary: null});
   }
 
   render() {
     const { repo } = this.props;
     const { name } = repo;
-    const { commits, createdRelease } = this.state;
-    let commitItems, screen;
+    const { commits, releaseSummary } = this.state;
+    let screen;
 
     screen = (
       <div>
+        <Button onClick={this.goBack}> GoBack </Button>
         {commits ? commits.map(commit => <CommitItem commit={commit.commit} handleCommitToggle={this.handleToggleCommit} />) : <div>You have no commits</div>}
         <div>
           <Button variant="outlined" onClick={this.handleCreateRelease}> Generate Release </Button>
@@ -73,9 +84,8 @@ export default class CommitsScreen extends Component {
       </div>
     )
        
-    console.log('createdRelease', createdRelease);
-    if (createdRelease) {
-      screen = <SummaryScreen summary={createdRelease}/>
+    if (releaseSummary) {
+      screen = <SummaryScreen  summary={releaseSummary} clearReleaseSummary={this.clearReleaseSummary}/>
     }
     return (
       <div>
