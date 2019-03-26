@@ -34,6 +34,7 @@ export default class CommitsScreen extends Component {
     const {commitsSelectedMap} = this.state;
     // toggle value of commit key 
     commitsSelectedMap.set(commit, !commitsSelectedMap.get(commit));
+    this.setState(commitsSelectedMap);
   }
 
   handleCreateRelease() {
@@ -41,27 +42,49 @@ export default class CommitsScreen extends Component {
     const { repo } = this.props;
     const { name } = repo;
 
-    selectedCommits
     let draft = {
       added: [],
-      changed:[], removed: [],
+      changed:[], 
+      removed: [],
     }
     // look through commits and do basic classification for (Added, Changed, and Removed)
     // selectedCommits.forEach(commit) {
 
-    // }
-    
-    // var messageTitle = item.commit.message.split('\n\n')[0];
-
-  //  debugger; 
-    
+    let mostRecentSelectedCommit;
     let reqBody = '';
+    debugger;
     commitsSelectedMap.forEach((isSelected, commit) => {
       if (isSelected) {
-        reqBody += `${commit.commit.message}\n`;
+        // store first(most recent) commit for SHA code
+        mostRecentSelectedCommit = mostRecentSelectedCommit || commit;
+        const messageTitle = commit.commit.message.split('\n\n')[0];
+        if (messageTitle.toLowerCase().search(/feature|add|new/) !== -1) {
+        // add to "added"
+          draft.added.push('- ' + messageTitle);
+        } else if (messageTitle.toLowerCase().search(/change|fix|modif/) !== -1) {
+          draft.changed.push('- ' + messageTitle);
+        } else if (messageTitle.toLowerCase().search(/remove|delete|destroy/) !== -1) {
+          draft.removed.push('- ' + messageTitle);
+        }
       }
     });
+    console.log('draft', draft);
+    reqBody += '## Added\n';
+    draft.added.forEach((added)=> {
+      reqBody += `${added}\n`;
+    });
 
+    reqBody += '## Changed\n';
+    draft.changed.forEach((change)=> {
+      reqBody += `${change}\n`;
+    });
+
+    reqBody += '## Removed\n';
+    draft.removed.forEach((change)=> {
+      reqBody += `${change}\n`;
+    });
+
+    console.log('reqBody', reqBody)
     fetch(`/api/create_release?repo=${name}`, {
       method: 'POST',
       headers: {
@@ -69,6 +92,7 @@ export default class CommitsScreen extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        target_commitish: mostRecentSelectedCommit.sha,
         reqBody,
       })
     })
@@ -93,7 +117,7 @@ export default class CommitsScreen extends Component {
     screen = (
       <div>
         <Button onClick={this.goBack}> GoBack </Button>
-        {commitsSelectedMap.size ? [...commitsSelectedMap.keys()].map(commit => <CommitItem commit={commit} handleCommitToggle={this.handleToggleCommit} />) : <div>You have no commits</div>}
+        {commitsSelectedMap.size ? [...commitsSelectedMap.keys()].map(commit => <CommitItem commit={commit} handleCommitToggle={this.handleToggleCommit} isSelected = {commitsSelectedMap.get(commit)} />) : <div>You have no commits</div>}
         <div>
           <Button variant="outlined" onClick={this.handleCreateRelease}> Generate Release </Button>
         </div>

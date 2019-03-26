@@ -1,27 +1,18 @@
 import React, { Component } from 'react';
+import Checkbox from '@material-ui/core/Checkbox'
 
 export default class CommitItem extends Component {
-  state = {
-    isSelected: false,
-  }
-
   toggleCommit = () => {
     const { commit, handleCommitToggle } = this.props;
-    this.setState(({ isSelected }) => (
-      {
-        isSelected: !isSelected,
-      }
-    ));
     handleCommitToggle(commit);
   }
 
   render() {
-    const { commit } = this.props;
-    const { isSelected } = this.state;
-    const { message } = commit;
+    const { commit, isSelected } = this.props;
+    const { message } = commit.commit;
     return (
       <div>
-        <input type="checkbox" checked={isSelected} onChange={this.toggleCommit} value={message} />
+        <Checkbox checked={isSelected} onChange={this.toggleCommit} value={message} />
         {message}
       </div>
     );

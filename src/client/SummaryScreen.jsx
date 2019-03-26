@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
+import ReactMarkdown from 'react-markdown'
 
 // eslint-disable-next-line react/prefer-stateless-function
 export default class SummaryScreen extends Component {
@@ -18,8 +19,9 @@ export default class SummaryScreen extends Component {
     return (
       <div>
         <Button onClick={this.goBack}>Go Back</Button>
+        Summary
         Tag Name: {tag_name}
-        <div style={{whiteSpace: 'pre-wrap'}}>{body}</div>
+        <ReactMarkdown source={body} />,
       </div>
     )
   }

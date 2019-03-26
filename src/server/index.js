@@ -146,9 +146,12 @@ app.get('/api/get_repo_commits', (req, res) => {
     (error, response, body) => {
       // Check if there are commits for the repo
       const jsonData = JSON.parse(body);
+      // req.session.repo = repo;
       if (Array.isArray(jsonData)) {
+        // req.session.repo.commits = jsonData;
         res.send({commits: jsonData});
       } else {
+        // req.session.repo.commits = [];
         res.send([]);
       }
     }
@@ -164,10 +167,11 @@ app.get('/api/get_repo_commits', (req, res) => {
 app.post('/api/create_release', (req, res) => {
   // req.checkBody('body', 'Body is required').notEmpty();
   const { repo } = req.query;
-  const { reqBody } = req.body;
+  const { reqBody, target_commitish } = req.body;
+
   request.get(
     {
-      url: `https://api.github.com/repos/${req.session.user}/${repo}/releases/latest`,
+      url: `https://api.github.com/repos/${req.session.user}/${repo}/releases`,
       headers: {
         Authorization: `token ${req.session.access_token}`,
         'User-Agent': 'Login-App'
@@ -175,8 +179,9 @@ app.post('/api/create_release', (req, res) => {
     },
     (error, response, body) => {
       const jsonData = JSON.parse(body);
-      const tagName = jsonData.tag_name;
-      // Assume all major releases
+      // get most recent release by RELEASE DATE
+      const tagName = jsonData[0].tag_name;
+      // Assume all major releases set release to 1.0.0 no earlier releases
       const newTagName = tagName ? semver.inc(tagName, 'major') : '1.0.0';
       request.post(
         {
@@ -185,7 +190,7 @@ app.post('/api/create_release', (req, res) => {
             Authorization: `token ${req.session.access_token}`,
             'User-Agent': 'Login-App'
           },
-          body: JSON.stringify({ tag_name: newTagName, body: reqBody })
+          body: JSON.stringify({ tag_name: newTagName, body: reqBody, target_commitish })
         },
         (error, response, body) => {
           const jsonData = JSON.parse(body);
