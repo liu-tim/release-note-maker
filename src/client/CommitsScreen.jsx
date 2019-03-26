@@ -8,7 +8,7 @@ export default class CommitsScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      commits: null,
+      commitsSelectedMap: new Map(),
       selectedCommits: new Set(),
       releaseSummary: null,
     };
@@ -23,26 +23,43 @@ export default class CommitsScreen extends Component {
     const { name } = repo;
     fetch(`/api/get_repo_commits?repo=${name}`)
       .then(res => res.json())
-      .then(commits => this.setState(commits));
+      .then((commitsData) => {
+        const {commits} = commitsData;
+        const map = new Map(commits.map(commit => [commit, false]));
+        this.setState({commitsSelectedMap: map})
+      });
   }
 
   handleToggleCommit(commit) {
-    console.log('hastogglecommit', commit);
-    if (this.state.selectedCommits.has(commit)) {
-      this.state.selectedCommits.delete(commit);
-    } else {
-      this.state.selectedCommits.add(commit);
-    }
+    const {commitsSelectedMap} = this.state;
+    // toggle value of commit key 
+    commitsSelectedMap.set(commit, !commitsSelectedMap.get(commit));
   }
 
   handleCreateRelease() {
-    const { selectedCommits } = this.state;
+    const { selectedCommits, commitsSelectedMap } = this.state;
     const { repo } = this.props;
     const { name } = repo;
 
+    selectedCommits
+    let draft = {
+      added: [],
+      changed:[], removed: [],
+    }
+    // look through commits and do basic classification for (Added, Changed, and Removed)
+    // selectedCommits.forEach(commit) {
+
+    // }
+    
+    // var messageTitle = item.commit.message.split('\n\n')[0];
+
+  //  debugger; 
+    
     let reqBody = '';
-    selectedCommits.forEach((commit) => {
-      reqBody += `${commit.message}\n`;
+    commitsSelectedMap.forEach((isSelected, commit) => {
+      if (isSelected) {
+        reqBody += `${commit.commit.message}\n`;
+      }
     });
 
     fetch(`/api/create_release?repo=${name}`, {
@@ -51,7 +68,6 @@ export default class CommitsScreen extends Component {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      // to do check if stringify is necesary
       body: JSON.stringify({
         reqBody,
       })
@@ -71,13 +87,13 @@ export default class CommitsScreen extends Component {
   render() {
     const { repo } = this.props;
     const { name } = repo;
-    const { commits, releaseSummary } = this.state;
+    const { commitsSelectedMap, releaseSummary } = this.state;
     let screen;
 
     screen = (
       <div>
         <Button onClick={this.goBack}> GoBack </Button>
-        {commits ? commits.map(commit => <CommitItem commit={commit.commit} handleCommitToggle={this.handleToggleCommit} />) : <div>You have no commits</div>}
+        {commitsSelectedMap.size ? [...commitsSelectedMap.keys()].map(commit => <CommitItem commit={commit} handleCommitToggle={this.handleToggleCommit} />) : <div>You have no commits</div>}
         <div>
           <Button variant="outlined" onClick={this.handleCreateRelease}> Generate Release </Button>
         </div>
@@ -85,11 +101,11 @@ export default class CommitsScreen extends Component {
     )
        
     if (releaseSummary) {
-      screen = <SummaryScreen  summary={releaseSummary} clearReleaseSummary={this.clearReleaseSummary}/>
+      screen = <SummaryScreen summary={releaseSummary} clearReleaseSummary={this.clearReleaseSummary}/>
     }
     return (
       <div>
-        Repo: {name} 
+        Repo: {name} Commit Log
         {screen}
      </div>
     );
