@@ -1,8 +1,28 @@
-h1 {
-  color: green;
+.screen {
+  margin-left: 20px;
+  margin-top: 20px;
+}
+
+.login {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.login-logo {
+  width: 20px;
+  margin-right: 5px; 
+}
+
+.header-title-container {
+  display: flex;
+}
+
+.header-title {
+  margin-left: 20px;
+  display: flex;
 }
 
 body {
-  text-align: center;
   margin: auto;
 }
+

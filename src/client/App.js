@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './app.css';
+import Button from '@material-ui/core/Button';
 import ReposScreen from './ReposScreen';
+import logo from '../../public/github.png'; 
 
 export default class App extends Component {
 
@@ -12,38 +14,24 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    // TODO: don't make unncessary calls on load here?
     fetch('/api/get_user')
       .then(res => res.json())
-      .then(a => this.setState({ user: a.user }));
+      .then(user => this.setState(user));
   }
 
   render() {
     const { user } = this.state;
-    // let screen;
-    // // TODO:
-    // if (!user) {
-    //   screen = loginScreen;
-    // } else if (user && !selectedRepo) {
-    //   screen = reposScreen
-    // } else if (authenticated &&reposelected) {
-    //   const commitsScreen = 
-    //   screen = commitsScreen
-    // } else {
-    //   // screen = Loading
-    // }
-    // // if (loaded) {
-    //   listItems = repos.map(repo => <RepoItem onItemClick={this.selectRepo} repo={repo} />);
-    //   if (selectedRepo) {
-    //     screen = <div> <CommitsScreen repo = {selectedRepo} /> </div>;
-    //   } else {
-    //     screen = listItems;
-    //   }
-    // }
-    // console.log('state', this.state);
     return (
       <div>
-        {user ? <ReposScreen/> : <a id="login-button" href="/api/login">Log In With GitHub</a>}
+        {user ? (
+          <ReposScreen /> 
+        ) : (
+          <div className="login"> 
+            <h1>Release Note Maker</h1>
+            <div><img src={logo}/></div>
+            <Button id="login-button" href="/api/login"><img className='login-logo' src={logo} /> Log In With GitHub</Button>
+          </div>
+)}
       </div>
     );
   }

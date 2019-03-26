@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
 import CommitItem from './CommitItem';
 import SummaryScreen from './SummaryScreen';
+import Header from './Header'
 
 export default class CommitsScreen extends Component {
 
@@ -25,8 +27,10 @@ export default class CommitsScreen extends Component {
       .then(res => res.json())
       .then((commitsData) => {
         const {commits} = commitsData;
-        const map = new Map(commits.map(commit => [commit, false]));
-        this.setState({commitsSelectedMap: map})
+        if (commits) {
+          const map = new Map(commits.map(commit => [commit, false]));
+          this.setState({commitsSelectedMap: map})
+        }
       });
   }
 
@@ -52,7 +56,6 @@ export default class CommitsScreen extends Component {
 
     let mostRecentSelectedCommit;
     let reqBody = '';
-    debugger;
     commitsSelectedMap.forEach((isSelected, commit) => {
       if (isSelected) {
         // store first(most recent) commit for SHA code
@@ -116,20 +119,29 @@ export default class CommitsScreen extends Component {
 
     screen = (
       <div>
-        <Button onClick={this.goBack}> GoBack </Button>
-        {commitsSelectedMap.size ? [...commitsSelectedMap.keys()].map(commit => <CommitItem commit={commit} handleCommitToggle={this.handleToggleCommit} isSelected = {commitsSelectedMap.get(commit)} />) : <div>You have no commits</div>}
+        <Header onBackClick={this.goBack} title={`${name} Commit Log`} />
+        {commitsSelectedMap.size ? (
+          <List>
+            {[...commitsSelectedMap.keys()]
+              .map(commit => (
+                <CommitItem
+                  commit={commit} 
+                  handleCommitToggle={this.handleToggleCommit} 
+                  isSelected={commitsSelectedMap.get(commit)}/>
+              ))}
+          </List>
+        ) : <div>You have no commits</div>}
         <div>
           <Button variant="outlined" onClick={this.handleCreateRelease}> Generate Release </Button>
         </div>
       </div>
-    )
+    );
        
     if (releaseSummary) {
       screen = <SummaryScreen summary={releaseSummary} clearReleaseSummary={this.clearReleaseSummary}/>
     }
     return (
       <div>
-        Repo: {name} Commit Log
         {screen}
      </div>
     );

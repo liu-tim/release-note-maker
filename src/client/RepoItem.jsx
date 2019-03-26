@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
 export default class RepoItem extends Component {
   handleClick = () => {
@@ -10,9 +12,9 @@ export default class RepoItem extends Component {
     const { repo } = this.props;
     const { name } = repo;
     return (
-      <li onClick={this.handleClick}>
-        {name}
-      </li>
+      <ListItem button onClick={this.handleClick}>
+        <ListItemText primary={name}/>
+      </ListItem>
     );
   }
 }
