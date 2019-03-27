@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
-import logo from '../../public/github.png';
-import './app.css';
+import logo from '../../../public/github.png';
+import '../app.css';
 
 const Header = (props) => {
   const {onBackClick, title} = props;

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
-import CommitItem from './CommitItem';
+import CommitItem from '../Components/CommitItem';
 import SummaryScreen from './SummaryScreen';
-import Header from './Header'
+import Header from '../Common/Header'
 
 export default class CommitsScreen extends Component {
 

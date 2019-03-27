@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './app.css';
 import Button from '@material-ui/core/Button';
-import ReposScreen from './ReposScreen';
+import ReposScreen from './Screens/ReposScreen';
 import logo from '../../public/github.png'; 
 
 export default class App extends Component {

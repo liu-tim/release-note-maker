@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactMarkdown from 'react-markdown'
-import Header from './Header';
+import Header from '../Common/Header';
 
 export default class SummaryScreen extends Component {
   goBack = () => {
