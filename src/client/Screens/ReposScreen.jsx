@@ -11,7 +11,6 @@ import Header from '../Common/Header';
 import '../app.css';
 
 export default class ReposScreen extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -33,31 +32,31 @@ export default class ReposScreen extends Component {
   }
 
   clearRepoSelection() {
-    this.setState({selectedRepo: null, searchedRepos: null });
+    this.setState({ selectedRepo: null, searchedRepos: null });
   }
 
   handleSearchQuery(event) {
+    const { repos } = this.state;
     const searchQuery = event.target.value;
-    let options = {
+    const options = {
       threshold: 0.3,
       minMatchCharLength: 1,
       keys: [
-        "name",
+        'name',
       ]
     };
-    console.log('repos', this.state.repos)
-    const fuse = new Fuse(this.state.repos, options);
+    const fuse = new Fuse(repos, options);
     const searchedRepos = fuse.search(searchQuery);
-    console.log(searchedRepos)
-    this.setState({searchedRepos});
+    this.setState({ searchedRepos });
   }
 
   render() {
-    const { repos, selectedRepo, searchQuery, searchedRepos } = this.state;
-    console.log('searchedRepos', searchedRepos)
+    const {
+      repos, selectedRepo, searchQuery, searchedRepos
+    } = this.state;
     let screen;
     if (selectedRepo) {
-      screen = <CommitsScreen repo = {selectedRepo} clearRepoSelection={this.clearRepoSelection}/>;
+      screen = <CommitsScreen repo={selectedRepo} clearRepoSelection={this.clearRepoSelection} />;
     } else if (!repos) {
       screen = <div>LOADING</div>;
     } else {
@@ -65,13 +64,13 @@ export default class ReposScreen extends Component {
       const displayedRepos = (searchedRepos && searchedRepos.length) ? searchedRepos : repos;
       screen = (
         <div>
-          <Header title={'Your repos: '}/>
+          <Header title="Your repos: " />
           <Input
             value={searchQuery}
             onChange={this.handleSearchQuery}
             endAdornment={(
               <InputAdornment position="end">
-              <Icon>search</Icon>
+                <Icon>search</Icon>
               </InputAdornment>
              )}
           />
@@ -81,7 +80,7 @@ export default class ReposScreen extends Component {
             </List>
           ) : <div> No repos</div>}
         </div>
-      )
+      );
     }
     return (
       <div className="screen">

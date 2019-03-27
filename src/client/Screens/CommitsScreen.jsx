@@ -3,15 +3,13 @@ import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import CommitItem from '../Components/CommitItem';
 import SummaryScreen from './SummaryScreen';
-import Header from '../Common/Header'
+import Header from '../Common/Header';
 
 export default class CommitsScreen extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
       commitsSelectedMap: new Map(),
-      selectedCommits: new Set(),
       releaseSummary: null,
     };
     this.handleToggleCommit = this.handleToggleCommit.bind(this);
@@ -26,17 +24,17 @@ export default class CommitsScreen extends Component {
     fetch(`/api/get_repo_commits?repo=${name}`)
       .then(res => res.json())
       .then((commitsData) => {
-        const {commits} = commitsData;
+        const { commits } = commitsData;
         if (commits) {
           const map = new Map(commits.map(commit => [commit, false]));
-          this.setState({commitsSelectedMap: map})
+          this.setState({ commitsSelectedMap: map });
         }
       });
   }
 
   handleToggleCommit(commit) {
-    const {commitsSelectedMap} = this.state;
-    // toggle value of commit key 
+    const { commitsSelectedMap } = this.state;
+    // toggle value of commit key
     commitsSelectedMap.set(commit, !commitsSelectedMap.get(commit));
     this.setState(commitsSelectedMap);
   }
@@ -59,7 +57,7 @@ export default class CommitsScreen extends Component {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({selectedCommits}),
+      body: JSON.stringify({ selectedCommits }),
     })
       .then(res => res.json())
       .then(releaseSummary => this.setState(releaseSummary));
@@ -70,7 +68,7 @@ export default class CommitsScreen extends Component {
   }
 
   clearReleaseSummary() {
-    this.setState({releaseSummary: null});
+    this.setState({ releaseSummary: null });
   }
 
   render() {
@@ -87,9 +85,10 @@ export default class CommitsScreen extends Component {
             {[...commitsSelectedMap.keys()]
               .map(commit => (
                 <CommitItem
-                  commit={commit} 
-                  handleCommitToggle={this.handleToggleCommit} 
-                  isSelected={commitsSelectedMap.get(commit)}/>
+                  commit={commit}
+                  handleCommitToggle={this.handleToggleCommit}
+                  isSelected={commitsSelectedMap.get(commit)}
+                />
               ))}
           </List>
         ) : <div>You have no commits</div>}
@@ -98,14 +97,14 @@ export default class CommitsScreen extends Component {
         </div>
       </div>
     );
-       
+
     if (releaseSummary) {
-      screen = <SummaryScreen summary={releaseSummary} clearReleaseSummary={this.clearReleaseSummary}/>
+      screen = <SummaryScreen summary={releaseSummary} clearReleaseSummary={this.clearReleaseSummary} />;
     }
     return (
       <div>
         {screen}
-     </div>
+      </div>
     );
   }
 }

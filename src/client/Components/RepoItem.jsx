@@ -13,7 +13,7 @@ export default class RepoItem extends Component {
     const { name } = repo;
     return (
       <ListItem button onClick={this.handleClick}>
-        <ListItemText primary={name}/>
+        <ListItemText primary={name} />
       </ListItem>
     );
   }

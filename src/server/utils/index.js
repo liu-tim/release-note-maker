@@ -1,7 +1,7 @@
 
 module.exports = {
   /**
-   * generateRequestBody - returns a release note string body 
+   * generateRequestBody - returns a release note string body
    * look through commits and do basic classification for (Added, Changed, and Removed)
    * @param  {array} commits - array of selected commits to generate release notes from
    */
@@ -9,19 +9,19 @@ module.exports = {
     let reqBody = '';
     const draft = {
       added: [],
-      changed:[],
+      changed: [],
       removed: [],
-    }
-    const {added, changed, removed } = draft;
+    };
+    const { added, changed, removed } = draft;
 
     commits.forEach((commit) => {
       const messageTitle = commit.commit.message.split('\n\n')[0];
       if (messageTitle.toLowerCase().search(/feature|add|new/) !== -1) {
-        added.push('- ' + messageTitle);
+        added.push(`- ${messageTitle}`);
       } else if (messageTitle.toLowerCase().search(/change|fix|modif/) !== -1) {
-        changed.push('- ' + messageTitle);
+        changed.push(`- ${messageTitle}`);
       } else if (messageTitle.toLowerCase().search(/remove|delete|destroy/) !== -1) {
-        removed.push('- ' + messageTitle);
+        removed.push(`- ${messageTitle}`);
       }
     });
 
@@ -47,4 +47,4 @@ module.exports = {
     }
     return reqBody;
   }
-}
+};

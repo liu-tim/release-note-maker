@@ -19,14 +19,13 @@ router.get('/api/get_user', (req, res) => {
 
 router.get('/api/login', (req, res, next) => {
   req.session.csrf_string = randomString.generate();
-  const githubAuthUrl =
-    `https://github.com/login/oauth/authorize?${ 
-      qs.stringify({
-        client_id: clientId,
-        redirect_uri: redirectUri,
-        state: req.session.csrf_string,
-        scope: 'repo'
-      })}`;
+  const githubAuthUrl = `https://github.com/login/oauth/authorize?${
+    qs.stringify({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      state: req.session.csrf_string,
+      scope: 'repo'
+    })}`;
   res.redirect(githubAuthUrl);
 });
 
@@ -37,7 +36,7 @@ router.get('/redirect', (req, res) => {
     request.post(
       {
         url:
-          `https://github.com/login/oauth/access_token?${ 
+          `https://github.com/login/oauth/access_token?${
             qs.stringify({
               client_id: clientId,
               client_secret: clientSecret,
@@ -104,7 +103,7 @@ router.get('/api/get_repo_commits', (req, res) => {
       // Check if there are commits for the repo
       const jsonData = JSON.parse(body);
       if (Array.isArray(jsonData)) {
-        res.send({commits: jsonData});
+        res.send({ commits: jsonData });
       } else {
         res.send([]);
       }
@@ -146,11 +145,11 @@ router.post('/api/create_release', (req, res) => {
             Authorization: `token ${req.session.access_token}`,
             'User-Agent': 'Login-App'
           },
-          body: JSON.stringify({ tag_name: newTagName, body: reqBody, target_commitish:mostRecentSelectedSHA})
+          body: JSON.stringify({ tag_name: newTagName, body: reqBody, target_commitish: mostRecentSelectedSHA })
         },
         (error, response, body) => {
           const jsonData = JSON.parse(body);
-          res.send({releaseSummary: jsonData});
+          res.send({ releaseSummary: jsonData });
         }
       );
     }

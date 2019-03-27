@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from 'react-markdown';
 import Header from '../Common/Header';
 
 export default class SummaryScreen extends Component {
@@ -12,8 +12,10 @@ export default class SummaryScreen extends Component {
     const { body, tag_name } = summary;
     return (
       <div>
-        <Header onBackClick={this.goBack} title={'Summary'} />
-        Tag Name: {tag_name}
+        <Header onBackClick={this.goBack} title="Summary" />
+        Tag Name:
+        {' '}
+        {tag_name}
         <ReactMarkdown source={body} />
       </div>
     );
