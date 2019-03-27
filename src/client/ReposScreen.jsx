@@ -39,11 +39,7 @@ export default class ReposScreen extends Component {
   handleSearchQuery(event) {
     const searchQuery = event.target.value;
     let options = {
-      shouldSort: true,
-      threshold: 0.6,
-      location: 0,
-      distance: 100,
-      maxPatternLength: 32,
+      threshold: 0.3,
       minMatchCharLength: 1,
       keys: [
         "name",
