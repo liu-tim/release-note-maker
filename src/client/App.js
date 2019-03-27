@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import './app.css';
-import Button from '@material-ui/core/Button';
 import ReposScreen from './Screens/ReposScreen';
-import logo from '../../public/github.png';
+import LoginScreen from './Screens/LoginScreen';
 
 export default class App extends Component {
   constructor(props) {
@@ -22,18 +21,7 @@ export default class App extends Component {
     const { user } = this.state;
     return (
       <div>
-        {user ? (
-          <ReposScreen />
-        ) : (
-          <div className="login">
-            <h1>Release Note Maker</h1>
-            <div><img src={logo} /></div>
-            <Button id="login-button" href="/api/login">
-              <img className="login-logo" src={logo} />
-              Log In With GitHub
-            </Button>
-          </div>
-        )}
+        {user ? <ReposScreen /> : (<LoginScreen /> )}
       </div>
     );
   }
