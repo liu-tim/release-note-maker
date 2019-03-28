@@ -18,7 +18,7 @@ module.exports = {
       const messageTitle = commit.commit.message.split('\n\n')[0];
       if (messageTitle.toLowerCase().search(/feature|add|new/) !== -1) {
         added.push(`- ${messageTitle}`);
-      } else if (messageTitle.toLowerCase().search(/change|fix|modif/) !== -1) {
+      } else if (messageTitle.toLowerCase().search(/change|fix|update|modif/) !== -1) {
         changed.push(`- ${messageTitle}`);
       } else if (messageTitle.toLowerCase().search(/remove|delete|destroy/) !== -1) {
         removed.push(`- ${messageTitle}`);

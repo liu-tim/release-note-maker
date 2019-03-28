@@ -5,9 +5,9 @@ import List from '@material-ui/core/List';
 import Icon from '@material-ui/core/Icon';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
-import RepoItem from '../Components/RepoItem';
+import RepoItem from '../components/RepoItem';
 import CommitsScreen from './CommitsScreen';
-import Header from '../Common/Header';
+import Header from '../common/Header';
 import '../app.css';
 
 export default class ReposScreen extends Component {

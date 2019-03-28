@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
-import CommitItem from '../Components/CommitItem';
+import CommitItem from '../components/CommitItem';
 import SummaryScreen from './SummaryScreen';
-import Header from '../Common/Header';
+import Header from '../common/Header';
 
 export default class CommitsScreen extends Component {
   constructor(props) {
@@ -51,16 +51,18 @@ export default class CommitsScreen extends Component {
       }
     });
 
-    fetch(`/api/create_release?repo=${name}`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ selectedCommits }),
-    })
-      .then(res => res.json())
-      .then(releaseSummary => this.setState(releaseSummary));
+    if (selectedCommits.length) {
+      fetch(`/api/create_release?repo=${name}`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ selectedCommits }),
+      })
+        .then(res => res.json())
+        .then(releaseSummary => this.setState(releaseSummary));
+    }
   }
 
   goBack() {
